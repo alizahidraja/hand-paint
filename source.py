@@ -19,11 +19,11 @@ cTime = 0
 points = []
 
 pencil_img = cv2.imread("images/pencil.png")
-pencil_img = cv2.resize(pencil_img, (100,100))
+pencil_img = cv2.resize(pencil_img, (100, 100))
 undo_img = cv2.imread("images/undo.png")
-undo_img = cv2.resize(undo_img, (100,100))
+undo_img = cv2.resize(undo_img, (100, 100))
 cancel_img = cv2.imread("images/cancel.png")
-cancel_img = cv2.resize(cancel_img, (100,100))
+cancel_img = cv2.resize(cancel_img, (100, 100))
 
 x_offset = 500
 y_offset = 10
@@ -32,14 +32,14 @@ undo = False
 
 while True:
     success, img = cap.read()
-    img = cv2.flip(img, 1)    
+    img = cv2.flip(img, 1)
     imgRGB = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
     results = hands.process(imgRGB)
 
     img = cv2.rectangle(img, (30, 30), (420, 420), (0, 255, 0), 3)
-    img[50:50+100, x_offset:x_offset+100] = pencil_img
-    img[170:170+100, x_offset:x_offset+100] = undo_img
-    img[290:290+100, x_offset:x_offset+100] = cancel_img
+    img[50 : 50 + 100, x_offset : x_offset + 100] = pencil_img
+    img[170 : 170 + 100, x_offset : x_offset + 100] = undo_img
+    img[290 : 290 + 100, x_offset : x_offset + 100] = cancel_img
     if pencil:
         img = cv2.rectangle(img, (500, 50), (600, 150), (0, 255, 0), 3)
     if undo:
@@ -47,7 +47,6 @@ while True:
 
     tipx = 0
     tipy = 0
-    
 
     for i in points:
         cv2.circle(img, i, 5, (0, 255, 0), cv2.FILLED)
@@ -59,7 +58,6 @@ while True:
                 # print(id,lm)
                 h, w, c = img.shape
                 cx, cy = int(lm.x * w), int(lm.y * h)
-
 
                 if id == 4:
                     tipx = cx
@@ -88,12 +86,12 @@ while True:
                             undo = True
                             if len(points) > 0:
                                 points.pop()
-                        
+
                         elif a >= 500 and a <= 600 and b >= 290 and b <= 390:
                             pencil = False
                             undo = False
                             points = []
-                        
+
                 """
                 if id == 16:
                     factor = 30
@@ -120,7 +118,7 @@ while True:
                 # if id ==0:
                 # cv2.circle(img, (cx, cy), 3, (255, 0, 255), cv2.FILLED)
 
-            #mpDraw.draw_landmarks(img, handLms, mpHands.HAND_CONNECTIONS)
+            # mpDraw.draw_landmarks(img, handLms, mpHands.HAND_CONNECTIONS)
 
     cTime = time.time()
     fps = 1 / (cTime - pTime)
