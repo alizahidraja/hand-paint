@@ -1,4 +1,4 @@
-# Hand Paint X Flask
+# Hand Paint
 
 Python program to draw with your hand 
 
