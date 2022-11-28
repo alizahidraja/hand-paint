@@ -1,7 +1,11 @@
 import cv2
-from streamlit_webrtc import VideoTransformerBase, webrtc_streamer
+from streamlit_webrtc import webrtc_streamer, RTCConfiguration, WebRtcMode
 import mediapipe as mp
+import av
 
+RTC_CONFIGURATION = RTCConfiguration(
+    {"iceServers": [{"urls": ["stun:stun.l.google.com:19302"]}]}
+)
 
 mpDraw = mp.solutions.drawing_utils
 hand_mesh =  mp.solutions.hands.Hands(
@@ -23,8 +27,8 @@ pencil = False
 undo = False
 points = []
 
-class VideoTransformer(VideoTransformerBase):
-    def transform(self, frame):
+class VideoProcessor():
+    def recv(self, frame):
         global pencil, undo, points 
 
         image = frame.to_ndarray(format="bgr24")
@@ -98,12 +102,15 @@ class VideoTransformer(VideoTransformerBase):
                     #    cv2.circle(image, (cx, cy), 3, (255, 0, 255), cv2.FILLED)
 
             #mpDraw.draw_landmarks(image, handLms, mp.solutions.hands.HAND_CONNECTIONS)
-        return image
+        return av.VideoFrame.from_ndarray(image, format="bgr24")
 
 
-webrtc_streamer(
-    key="WYH", 
-    video_transformer_factory=VideoTransformer,
+webrtc_ctx = webrtc_streamer(
+    key="WYH",
+    mode=WebRtcMode.SENDRECV,
+    rtc_configuration=RTC_CONFIGURATION,
     media_stream_constraints={"video": True, "audio": False},
-    )
+    video_processor_factory=VideoProcessor,
+    async_processing=True,
+)
         
